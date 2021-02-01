@@ -25,9 +25,15 @@ fn main() -> std::io::Result<()> {
                     println!("change directory to {:?}", dir);
                 }
             }
+            "exit" => return Ok(()),
             command => {
-                let mut child = Command::new(command).args(args).spawn()?;
-                child.wait()?;
+                let child = Command::new(command).args(args).spawn();
+                match child {
+                    Ok(mut child) => {
+                        child.wait()?;
+                    }
+                    Err(e) => eprintln!("{}", e),
+                }
             }
         }
     }
