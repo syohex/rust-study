@@ -71,6 +71,20 @@ impl Universe {
 
         count
     }
+
+    pub fn row_as_string(&self, row: usize) -> Option<String> {
+        if row < self.rows {
+            let mut row_string = String::new();
+            for &cell in &self.cells[row] {
+                let symbol = if cell == Cell::Dead { '◻' } else { '◼' };
+                row_string.push(symbol);
+            }
+
+            Some(row_string)
+        } else {
+            None
+        }
+    }
 }
 
 impl fmt::Display for Universe {
