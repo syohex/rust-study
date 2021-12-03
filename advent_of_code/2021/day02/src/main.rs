@@ -32,6 +32,29 @@ fn calculate_position(commands: &Vec<Command>) -> i32 {
 
     x * y
 }
+
+fn calculate_position_with_aim(commands: &Vec<Command>) -> i32 {
+    let mut x = 0;
+    let mut y = 0;
+    let mut aim = 0;
+
+    for command in commands {
+        match command.direction {
+            Direction::Forward => {
+                x += command.count;
+                y += aim * command.count;
+            }
+            Direction::Down => {
+                aim += command.count;
+            }
+            Direction::Up => {
+                aim -= command.count;
+            }
+        }
+    }
+
+    x * y
+}
 fn main() {
     let file = File::open("data/input.txt").unwrap();
     let lines = BufReader::new(file).lines();
@@ -54,7 +77,10 @@ fn main() {
         .collect();
 
     let part1 = calculate_position(&commands);
+    let part2 = calculate_position_with_aim(&commands);
     assert_eq!(part1, 1868935);
+    assert_eq!(part2, 1965970888);
 
     println!("part1: {}", part1);
+    println!("part2: {}", part2);
 }
