@@ -47,26 +47,11 @@ fn part2(data: &Vec<Vec<u8>>) -> i32 {
 
     let mut oxygen = 0;
     for i in 0..size {
-        let count = oxygen_set.len();
         let ones = oxygen_set.iter().filter(|v| v[i] == b'1').count();
-        let zeros = count - ones;
+        let zeros = oxygen_set.len() - ones;
+        let keep = if ones >= zeros { b'1' } else { b'0' };
+        oxygen_set.retain(|v| v[i] == keep);
 
-        let mut keeps: HashSet<Vec<u8>> = HashSet::new();
-        if ones >= zeros {
-            for c in oxygen_set.iter() {
-                if c[i] == b'1' {
-                    keeps.insert(c.clone());
-                }
-            }
-        } else {
-            for c in oxygen_set.iter() {
-                if c[i] == b'0' {
-                    keeps.insert(c.clone());
-                }
-            }
-        }
-
-        oxygen_set = keeps;
         if oxygen_set.len() == 1 {
             let remain = oxygen_set.iter().next().unwrap();
             oxygen = remain.iter().fold(0, |acc, b| acc * 2 + (*b - b'0') as i32);
@@ -76,26 +61,12 @@ fn part2(data: &Vec<Vec<u8>>) -> i32 {
 
     let mut co2 = 0;
     for i in 0..size {
-        let count = co2_set.len();
         let ones = co2_set.iter().filter(|v| v[i] == b'1').count();
-        let zeros = count - ones;
+        let zeros = co2_set.len() - ones;
+        let keep = if ones >= zeros { b'0' } else { b'1' };
 
-        let mut keeps: HashSet<Vec<u8>> = HashSet::new();
-        if zeros <= ones {
-            for c in co2_set.iter() {
-                if c[i] == b'0' {
-                    keeps.insert(c.clone());
-                }
-            }
-        } else {
-            for c in co2_set.iter() {
-                if c[i] == b'1' {
-                    keeps.insert(c.clone());
-                }
-            }
-        }
+        co2_set.retain(|v| v[i] == keep);
 
-        co2_set = keeps;
         if co2_set.len() == 1 {
             let remain = co2_set.iter().next().unwrap();
             co2 = remain.iter().fold(0, |acc, b| acc * 2 + (*b - b'0') as i32);
