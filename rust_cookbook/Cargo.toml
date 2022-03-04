@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+    "generate_random_values",
+    "vector_sort",
+]
