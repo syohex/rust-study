@@ -13,7 +13,7 @@ enum IsbnError {
 }
 
 impl FromStr for Isbn {
-    type Err = IsbnError; // TODO: replace with appropriate type
+    type Err = IsbnError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let bs: Vec<u8> = s.bytes().filter(|b| *b != b'-').collect();
