@@ -27,7 +27,7 @@ enum Value {
     None,
     Index(usize),
     IntValue(i64),
-    //    String(String),
+    String(String),
 }
 
 impl Value {
@@ -49,6 +49,14 @@ impl Value {
         match self {
             Value::IntValue(val) => *val,
             _ => panic!("value is not an integer value: {:?}", self),
+        }
+    }
+
+    fn print(&self) {
+        match self {
+            Value::IntValue(n) => println!("print: {n}"),
+            Value::String(s) => println!("print: {s}"),
+            _ => panic!("unsupported print value: {:?}", self),
         }
     }
 }
@@ -237,6 +245,35 @@ impl Input {
 
         num
     }
+
+    fn parse_string(&mut self) -> String {
+        let mut s = String::new();
+
+        self.eat_char(); // skip quote
+
+        loop {
+            let ch = self.peek_char();
+            if ch == '"' {
+                self.eat_char();
+                return s;
+            }
+
+            if ch == '\\' {
+                let ch2 = self.peek_char();
+                match ch2 {
+                    't' => s.push('\t'),
+                    'n' => s.push('\n'),
+                    '"' => s.push('"'),
+                    '\\' => s.push('\\'),
+                    _ => panic!("unsupported escape char: {ch2}"),
+                }
+            } else {
+                s.push(ch);
+            }
+
+            self.eat_char();
+        }
+    }
 }
 
 fn parse_atom(input: &mut Input, prog: &mut Program) {
@@ -255,6 +292,12 @@ fn parse_atom(input: &mut Input, prog: &mut Program) {
     if ch.is_digit(10) {
         let num = input.parse_integer();
         prog.append_insn_immediate(Op::Push, Value::IntValue(num));
+        return;
+    }
+
+    if ch == '"' {
+        let s = input.parse_string();
+        prog.append_insn_immediate(Op::Push, Value::String(s));
         return;
     }
 
@@ -461,8 +504,7 @@ impl VM {
                     self.push(Value::IntValue(n));
                 }
                 Op::Print => {
-                    let val = self.pop().unwrap_int();
-                    println!("print: {val}");
+                    self.pop().print();
                 }
             }
 
